@@ -1,0 +1,3 @@
+fluent-bit-stdout
+out_stdout.h
+out_stdout.so
