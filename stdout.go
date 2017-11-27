@@ -1,6 +1,11 @@
 package main
 
-import "github.com/fluent/fluent-bit-go/output"
+import (
+	"strings"
+
+	"github.com/fatih/color"
+	"github.com/fluent/fluent-bit-go/output"
+)
 import (
 	"C"
 	"fmt"
@@ -9,7 +14,7 @@ import (
 
 //export FLBPluginRegister
 func FLBPluginRegister(ctx unsafe.Pointer) int {
-	return output.FLBPluginRegister(ctx, "stdout", "Stdout GO!")
+	return output.FLBPluginRegister(ctx, "guin_stdout", "Stdout GO!")
 }
 
 //export FLBPluginInit
@@ -19,6 +24,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	// Example to retrieve an optional configuration parameter
 	param := output.FLBPluginConfigKey(ctx, "param")
 	fmt.Printf("[flb-go] plugin parameter = '%s'\n", param)
+	rainbow("Guin is a unicorn! \n")
 	return output.FLB_OK
 }
 
@@ -66,4 +72,48 @@ func FLBPluginExit() int {
 }
 
 func main() {
+}
+
+func rainbow(s string) {
+	for i := 0; i < len(s); i += 30 {
+
+		// fmt.Printf("%d", i)
+		if i+5 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.RedString(s[i:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.RedString(s[i:(i+5)]), " "))
+		}
+		if i+10 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.YellowString(s[i+5:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.YellowString(s[(i+5):(i+10)]), " "))
+		}
+		if i+15 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.GreenString(s[i+10:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.GreenString(s[(i+10):(i+15)]), " "))
+		}
+		if i+20 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.BlueString(s[i+15:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.BlueString(s[(i+15):(i+20)]), " "))
+		}
+		if i+25 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.MagentaString(s[i+20:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.MagentaString(s[(i+20):(i+25)]), " "))
+		}
+		if i+30 > len(s) {
+			fmt.Printf("%s", strings.TrimSuffix(color.CyanString(s[i+25:len(s)]), " "))
+			break
+		} else {
+			fmt.Printf("%s", strings.TrimSuffix(color.CyanString(s[(i+25):(i+30)]), " "))
+		}
+	}
+	fmt.Printf("\n")
 }
