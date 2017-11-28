@@ -24,7 +24,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	// Example to retrieve an optional configuration parameter
 	param := output.FLBPluginConfigKey(ctx, "param")
 	fmt.Printf("[flb-go] plugin parameter = '%s'\n", param)
-	rainbow("Guin is awesome! \n")
+	rainbow("Guin is awesome! \n", 0)
 	return output.FLB_OK
 }
 
@@ -37,7 +37,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 	// Create Fluent Bit decoder
 	dec := output.NewDecoder(data, int(length))
-	rainbow("Guin is awesome! \n")
+	rainbow("Guin is awesome! \n", 0)
 	// Iterate Records
 	count = 0
 	for {
@@ -54,7 +54,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 			logLine += fmt.Sprint(", {\"", k, "\": ", v)
 		}
 		logLine += "}]"
-		rainbow(logLine)
+		rainbow(logLine, count)
 		fmt.Printf("\n")
 		count++
 	}
@@ -75,11 +75,10 @@ func FLBPluginExit() int {
 func main() {
 }
 
-func rainbow(s string) {
+func rainbow(s string, lineCount int) {
 	for i := 0; i < len(s); i++ {
 
-		subindex := i % 30 // will give the index of each 30 char substring
-		// fmt.Printf("%d", subindex)
+		subindex := (i + lineCount) % 30 // will give the index of each 30 char substring, and displace the start color by 1 character
 
 		switch {
 		case subindex >= 0 && subindex < 5:
