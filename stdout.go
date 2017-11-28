@@ -1,10 +1,8 @@
 package main
 
 import (
-	"strings"
-
-	"github.com/fatih/color"
 	"github.com/fluent/fluent-bit-go/output"
+	"github.com/guineveresaenger/golang-rainbow"
 )
 import (
 	"C"
@@ -24,7 +22,6 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	// Example to retrieve an optional configuration parameter
 	param := output.FLBPluginConfigKey(ctx, "param")
 	fmt.Printf("[flb-go] plugin parameter = '%s'\n", param)
-	rainbow("Guin is awesome! \n", 0)
 	return output.FLB_OK
 }
 
@@ -37,7 +34,6 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 	// Create Fluent Bit decoder
 	dec := output.NewDecoder(data, int(length))
-	rainbow("Guin is awesome! \n", 0)
 	// Iterate Records
 	count = 0
 	for {
@@ -54,7 +50,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 			logLine += fmt.Sprint(", {\"", k, "\": ", v)
 		}
 		logLine += "}]"
-		rainbow(logLine, count)
+		rainbow.Rainbow(logLine, count)
 		fmt.Printf("\n")
 		count++
 	}
@@ -73,53 +69,4 @@ func FLBPluginExit() int {
 }
 
 func main() {
-}
-
-func rainbow(s string, lineCount int) {
-	for i := 0; i < len(s); i++ {
-
-		subindex := (i + lineCount) % 30 // will give the index of each 30 char substring, and displace the start color by 1 character
-
-		switch {
-		case subindex >= 0 && subindex < 5:
-			red(string(s[i]))
-		case subindex >= 5 && subindex < 10:
-			yellow(string(s[i]))
-		case subindex >= 10 && subindex < 15:
-			green(string(s[i]))
-		case subindex >= 15 && subindex < 20:
-			blue(string(s[i]))
-		case subindex >= 20 && subindex < 25:
-			magenta(string(s[i]))
-		case subindex >= 25 && subindex < 30:
-			cyan(string(s[i]))
-		default:
-			fmt.Printf(string(s[i]))
-		}
-	}
-	fmt.Printf("\n")
-}
-
-func red(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.RedString(s), " "))
-}
-
-func yellow(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.YellowString(s), " "))
-}
-
-func blue(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.BlueString(s), " "))
-}
-
-func green(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.GreenString(s), " "))
-}
-
-func magenta(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.MagentaString(s), " "))
-}
-
-func cyan(s string) {
-	fmt.Printf("%s", strings.TrimSuffix(color.CyanString(s), " "))
 }
