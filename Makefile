@@ -6,6 +6,3 @@ fast:
 
 clean:
 	rm -rf *.so *.h *~
-
-test:
-	go test 
