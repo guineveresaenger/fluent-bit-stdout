@@ -1,24 +1,23 @@
 package main
 
-import "github.com/fluent/fluent-bit-go/output"
 import (
 	"C"
 	"fmt"
 	"unsafe"
+
+	"github.com/fluent/fluent-bit-go/output"
+	"github.com/guineveresaenger/golang-rainbow"
 )
 
 //export FLBPluginRegister
 func FLBPluginRegister(ctx unsafe.Pointer) int {
-	return output.FLBPluginRegister(ctx, "stdout", "Stdout GO!")
+	return output.FLBPluginRegister(ctx, "rainbow_stdout", "Stdout GO!")
 }
 
 //export FLBPluginInit
 // (fluentbit will call this)
 // ctx (context) pointer to fluentbit context (state/ c code)
 func FLBPluginInit(ctx unsafe.Pointer) int {
-	// Example to retrieve an optional configuration parameter
-	param := output.FLBPluginConfigKey(ctx, "param")
-	fmt.Printf("[flb-go] plugin parameter = '%s'\n", param)
 	return output.FLB_OK
 }
 
@@ -31,7 +30,6 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 	// Create Fluent Bit decoder
 	dec := output.NewDecoder(data, int(length))
-
 	// Iterate Records
 	count = 0
 	for {
@@ -42,21 +40,16 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 		}
 
 		// Print record keys and values
-		timestamp := ts.(output.FLBTime)
-		fmt.Printf("[%d] %s: [%s, {", count, C.GoString(tag),
-			timestamp.String())
+		timestamp := ts
+		logLine := fmt.Sprint("[", count, "] ", C.GoString(tag), ": [", timestamp, "]")
 		for k, v := range record {
-			fmt.Printf("\"%s\": %v, ", k, v)
+			logLine += fmt.Sprint(", {\"", k, "\": ", v)
 		}
-		fmt.Printf("}\n")
+		logLine += "}"
+		rainbow.Rainbow(logLine, count)
 		count++
 	}
 
-	// Return options:
-	//
-	// output.FLB_OK    = data have been processed.
-	// output.FLB_ERROR = unrecoverable error, do not try this again.
-	// output.FLB_RETRY = retry to flush later.
 	return output.FLB_OK
 }
 
