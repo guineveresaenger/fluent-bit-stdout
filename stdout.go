@@ -6,17 +6,14 @@ import (
 	"unsafe"
 
 	"github.com/fluent/fluent-bit-go/output"
-	"github.com/guineveresaenger/golang-rainbow"
 )
 
 //export FLBPluginRegister
 func FLBPluginRegister(ctx unsafe.Pointer) int {
-	return output.FLBPluginRegister(ctx, "rainbow_stdout", "Stdout GO!")
+	return output.FLBPluginRegister(ctx, "gstdout", "Stdout GO!")
 }
 
 //export FLBPluginInit
-// (fluentbit will call this)
-// ctx (context) pointer to fluentbit context (state/ c code)
 func FLBPluginInit(ctx unsafe.Pointer) int {
 	return output.FLB_OK
 }
@@ -30,6 +27,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 	// Create Fluent Bit decoder
 	dec := output.NewDecoder(data, int(length))
+
 	// Iterate Records
 	count = 0
 	for {
@@ -41,15 +39,14 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 		// Print record keys and values
 		timestamp := ts
-		logLine := fmt.Sprint("[", count, "] ", C.GoString(tag), ": [", timestamp, "]")
+		fmt.Printf("[%d] %s: [%d, {", count, C.GoString(tag),
+			timestamp)
 		for k, v := range record {
-			logLine += fmt.Sprint(", {\"", k, "\": ", v)
+			fmt.Printf("\"%s\": %v ", k, v)
 		}
-		logLine += "}"
-		rainbow.Rainbow(logLine, count)
+		fmt.Printf("}]\n")
 		count++
 	}
-
 	return output.FLB_OK
 }
 
