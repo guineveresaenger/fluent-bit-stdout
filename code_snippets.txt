@@ -1,0 +1,8 @@
+The logline stuff (goes right underneath the timespamp = ts line):
+
+logLine := fmt.Sprint("[", count, "] ", C.GoString(tag), ": [", timestamp, "]")
+		for k, v := range record {
+			logLine += fmt.Sprint(", {\"", k, "\": ", v)
+		}
+		logLine += "}"
+        rainbow.Rainbow(logLine, count)
